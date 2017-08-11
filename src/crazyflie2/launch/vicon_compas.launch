@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="pub_mag" pkg="crazyflie2" type="pub_mag.py" />
+	<node name="complementary_filter_node" pkg="imu_complementary_filter" type="complementary_filter_node" />
+
+	<include file="$(find vicon_bridge)/launch/vicon.launch" />
+
+</launch>

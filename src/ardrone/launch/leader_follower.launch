@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<launch>
+
+	<include file="$(find vicon_bridge)/launch/vicon.launch" />
+
+	<group ns="uav1">
+    <param name="tf_prefix" value="uav1" />
+		<include file="$(find ardrone_autonomy)/launch/ardrone.launch">
+			<arg name="ip" value="192.168.1.15" />
+      <!-- Choose ultrasound frequencies to help reduce interference between drones.
+           Available values are '7' or '8'. -->
+      <arg name="freq" value="7" />
+    </include>
+
+		<include file="$(find ardrone)/launch/ardrone_leader.launch">
+		</include>
+
+		<node name="ardrone_control" pkg="falkor_ardrone" type="ardrone_control.py" />
+	</group>
+
+	<group ns="uav2">
+    <param name="tf_prefix" value="uav2" />
+		<include file="$(find ardrone_autonomy)/launch/ardrone.launch">
+			<arg name="ip" value="192.168.1.16" />
+      <arg name="freq" value="8" />
+    </include>
+
+		<include file="$(find ardrone)/launch/ardrone_follower.launch">
+		</include>
+
+		<node name="ardrone_control" pkg="falkor_ardrone" type="ardrone_control.py" />
+	</group>
+
+</launch>

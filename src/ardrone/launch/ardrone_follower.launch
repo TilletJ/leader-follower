@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="commande_follower" pkg="simulation" type="commande_follower" />
+  <node name="ardrone_follower" pkg="ardrone" type="ardrone_follower" />
+</launch>

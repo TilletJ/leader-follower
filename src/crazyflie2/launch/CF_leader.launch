@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="commande_leader2" pkg="crazyflie2" type="commande_leader2" />
+
+  <group ns="uav1">
+     <node name="cfdrone" pkg="crazyflie2" type="cfdrone" />
+  </group>
+
+<!--
+  <group ns="uav2">
+	<node name="drone2" pkg="lf_crazyflie" type="drone2" />
+  </group>
+-->
+
+</launch>

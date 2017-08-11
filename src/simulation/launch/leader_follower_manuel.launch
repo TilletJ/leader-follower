@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="commande_follower" pkg="simulation" type="commande_follower" />
+  <node name="gazebo_vicon" pkg="simulation" type="gazebo_vicon.py" />
+
+  <group ns="uav2">
+	<node name="drone" pkg="simulation" type="drone" />
+  </group>
+
+</launch>
