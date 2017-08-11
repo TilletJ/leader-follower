@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Start Gazebo with wg world running in (max) realtime -->
+  <include file="/home/joris/building_editor_models/Voliere_sans_plafond/voliere.launch"/>
+
+  <!-- Spawn simulated quadrotor uav -->
+  <group ns="uav1">
+      <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
+        <arg name="model" value="$(find hector_quadrotor_description)/urdf/quadrotor_hokuyo_utm30lx.gazebo.xacro"/>
+        <arg name="controllers" value="
+            controller/attitude
+            controller/velocity
+            controller/position
+            "/>
+        <arg name="name" value="uav1" />
+        <arg name="tf_prefix" value="uav1" />
+        <arg name="x" value="-1.0" />
+      </include>
+
+      <include file="$(find hector_quadrotor_teleop)/launch/xbox_controller.launch" >
+        <arg name="control_mode" value="position"/>
+      </include>
+  </group>
+
+  <group ns="uav2">
+      <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
+        <arg name="model" value="$(find hector_quadrotor_description)/urdf/quadrotor_hokuyo_utm30lx.gazebo.xacro"/>
+        <arg name="controllers" value="
+            controller/attitude
+            controller/velocity
+            controller/position
+            "/>
+        <arg name="name" value="uav2" />
+        <arg name="tf_prefix" value="uav2" />
+        <arg name="y" value="-1.0" />
+      </include>
+  </group>
+
+  <group ns="uav3">
+      <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
+        <arg name="model" value="$(find hector_quadrotor_description)/urdf/quadrotor_hokuyo_utm30lx.gazebo.xacro"/>
+        <arg name="controllers" value="
+            controller/attitude
+            controller/velocity
+            controller/position
+            "/>
+        <arg name="name" value="uav3" />
+        <arg name="tf_prefix" value="uav3" />
+        <arg name="x" value="1.0" />
+      </include>
+  </group>
+
+   <group ns="uav4">
+      <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
+        <arg name="model" value="$(find hector_quadrotor_description)/urdf/quadrotor_hokuyo_utm30lx.gazebo.xacro"/>
+        <arg name="controllers" value="
+            controller/attitude
+            controller/velocity
+            controller/position
+            "/>
+        <arg name="name" value="uav4" />
+        <arg name="tf_prefix" value="uav4" />
+        <arg name="y" value="1.0" />
+      </include>
+  </group>
+
+
+
+</launch>
