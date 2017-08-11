@@ -1,0 +1,7 @@
+<launch>
+	<include file="$(find vicon_bridge)/launch/vicon.launch"/>
+	<!-- LINE COMMENTED OUT <include file="$(find mocap_vicon)/launch/vicon.launch"/> LINE COMMENTED OUT -->
+	<include file="$(find crazyflie_demo)/launch/demo_localisation.launch">
+		<arg name="uri" value="radio://0/40/2M"/>
+	</include> 
+</launch>
