@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
 <launch>
-  <node name="commande_leader" pkg="leader_follower" type="commande_leader" />
-  <node name="ardrone_leader" pkg="simulation" type="ardrone_leader" />
+  <node name="commande_leader" pkg="simulation" type="commande_leader" />
+  <node name="ardrone_leader" pkg="ardrone" type="ardrone_leader" />
 </launch>

@@ -24,8 +24,8 @@ void euler(const float& dt)
   // X[2] = atan2(X[1] - y_old, X[0] - x_old);
 
   // Lemniscate (symbole infini)
-  X[0] = 1.2 * sqrt(2) * sin(t/25.) / (1 + pow(cos(t/25.),2));
-  X[1] = 2.4 * sqrt(2) * sin(t/25.) * cos(t/25.) / (1 + pow(cos(t/25.),2));
+  X[0] = 1.6 * sqrt(2) * sin(t/25.) / (1 + pow(cos(t/25.),2));
+  X[1] = 3.2 * sqrt(2) * sin(t/25.) * cos(t/25.) / (1 + pow(cos(t/25.),2));
   X[2] = atan2(X[1] - y_old, X[0] - x_old);
 }
 
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
   X[2]=0;
 
   ros::Rate loop_rate(25);
-  float dt = 0.1;
+  float dt = 0.08;
   tf::Quaternion q;
   geometry_msgs::PoseStamped msg;
 
