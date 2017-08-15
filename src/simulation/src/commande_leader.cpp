@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
   X[2]=0;
 
   ros::Rate loop_rate(25);
-  float dt = 0.08;
+  float dt = 0.1;
   tf::Quaternion q;
   geometry_msgs::PoseStamped msg;
 

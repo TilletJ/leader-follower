@@ -54,10 +54,10 @@ int main(int argc, char **argv) {
       e_cap = e_cap + 2*pi;
     }
 
-    goal.linear.x = 0.15 * (cos(yaw)*(cible[0]-pos[0]) + sin(yaw)*(cible[1]-pos[1]));
-    goal.linear.y = 0.15 * (-sin(yaw)*(cible[0]-pos[0]) + cos(yaw)*(cible[1] - pos[1]));
-    goal.linear.z = 0.15 * (cible[2] - pos[2]);
-    goal.angular.z = 0.15 * e_cap;
+    goal.linear.x = 0.2 * (cos(yaw)*(cible[0]-pos[0]) + sin(yaw)*(cible[1]-pos[1]));
+    goal.linear.y = 0.2 * (-sin(yaw)*(cible[0]-pos[0]) + cos(yaw)*(cible[1] - pos[1]));
+    goal.linear.z = 0.3 * (cible[2] - pos[2]);
+    goal.angular.z = 0.2 * e_cap;
 
     pub_cmd.publish(goal);
     ros::spinOnce();
