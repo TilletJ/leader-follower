@@ -135,6 +135,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/crazyflie_node.cpp)
 add_executable(cfdrone src/cfdrone.cpp)
+add_executable(cfdrone_3B src/cfdrone_3B.cpp)
 add_executable(commande_leader2 src/commande_leader2.cpp)
 
 ## Rename C++ executable without prefix
@@ -152,6 +153,9 @@ add_executable(commande_leader2 src/commande_leader2.cpp)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(cfdrone
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(cfdrone_3B
   ${catkin_LIBRARIES}
 )
 target_link_libraries(commande_leader2

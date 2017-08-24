@@ -26,7 +26,6 @@ void recuperePosCible(const geometry_msgs::PoseStamped::ConstPtr& msg)
   cible[2] = msg->pose.position.z;
   tf::Quaternion q(msg->pose.orientation.x, msg->pose.orientation.y, msg->pose.orientation.z, msg->pose.orientation.w);
   obj_yaw = tf::getYaw(q);
-  //TODO recuper le cap de la cible et s'en servir.
 }
 
 

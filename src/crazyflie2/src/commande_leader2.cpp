@@ -22,10 +22,13 @@ void euler(const float& dt)
   //X[1] = 15*cos(t/9.)*dt;
   //X[2] = atan2(X[1] - y_old, X[0] - x_old);
 
-  //Lemniscate (symbole infini)
-  X[0] = 30 * sqrt(2) * sin(t/12.) / (1 + pow(cos(t/12.),2));
-  X[1] = 60 * sqrt(2) * sin(t/12.) * cos(t/12.) / (1 + pow(cos(t/12.),2));
+  // Lemniscate (symbole infini)
+  X[0] = 1.5 * sqrt(2) * sin(t/25.) / (1 + pow(cos(t/25.),2));
+  X[1] = 3.0 * sqrt(2) * sin(t/25.) * cos(t/25.) / (1 + pow(cos(t/25.),2));
   X[2] = atan2(X[1] - y_old, X[0] - x_old);
+
+  //X[0] = 15*t/9.*dt;
+  //X[1] = std::min(15*t/9.*dt - 2, 2.0);
 }
 
 
@@ -40,7 +43,7 @@ int main(int argc, char **argv) {
   X[2]=0;
 
   ros::Rate loop_rate(25);
-  float dt = 0.05;
+  float dt = 0.1;
   tf::Quaternion q;
   geometry_msgs::PoseStamped msg;
 
@@ -54,7 +57,7 @@ int main(int argc, char **argv) {
     msg.header.stamp = ros::Time::now();
     msg.pose.position.x = X[0];
     msg.pose.position.y = X[1];
-    msg.pose.position.z = 1.5;
+    msg.pose.position.z = 1.0;
     msg.pose.orientation.x = q.getX();
     msg.pose.orientation.y = q.getY();
     msg.pose.orientation.z = q.getZ();

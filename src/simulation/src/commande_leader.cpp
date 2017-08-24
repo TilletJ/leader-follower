@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     msg.header.stamp = ros::Time::now();
     msg.pose.position.x = X[0];
     msg.pose.position.y = X[1];
-    msg.pose.position.z = 1.4;
+    msg.pose.position.z = 1.6;
     msg.pose.orientation.x = q.getX();
     msg.pose.orientation.y = q.getY();
     msg.pose.orientation.z = q.getZ();

@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
     msg.header.stamp = ros::Time::now();
     msg.pose.position.x = pos_leader[0] + d*cos(theta);
     msg.pose.position.y = pos_leader[1] + d*sin(theta);
-    msg.pose.position.z = std::max(pos_leader[2] - 0.2, 1.0);
+    msg.pose.position.z = std::max(pos_leader[2] - 0.4, 1.0);
     q.setRPY(0,0,theta - pi);
     msg.pose.orientation.x = q.getX();
     msg.pose.orientation.y = q.getY();

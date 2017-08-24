@@ -3,12 +3,16 @@
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "geometry_msgs/Twist.h"
+#include "ardrone_autonomy/Navdata.h"
+#include "std_msgs/Empty.h"
 #include "tf/tf.h"
 #include <tf2/LinearMath/Quaternion.h>
 
 const double pi = 3.14159;
 double cible[3], pos[3];
 double yaw, obj_yaw;
+
+ros::Publisher pub_landing;
 
 void recuperePos(const geometry_msgs::TransformStamped::ConstPtr& msg)
 {
@@ -26,9 +30,16 @@ void recuperePosCible(const geometry_msgs::PoseStamped::ConstPtr& msg)
   cible[2] = msg->pose.position.z;
   tf::Quaternion q(msg->pose.orientation.x, msg->pose.orientation.y, msg->pose.orientation.z, msg->pose.orientation.w);
   obj_yaw = tf::getYaw(q);
-  //TODO recuper le cap de la cible et s'en servir.
 }
 
+void recupereEtatLeader(const ardrone_autonomy::Navdata::ConstPtr& msg)
+{
+  if (msg->state == 2 || msg->state == 8 || msg->state == 0)
+  {
+    std_msgs::Empty empty;
+    pub_landing.publish(empty);
+  }
+}
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "ardrone_follower");
@@ -37,6 +48,8 @@ int main(int argc, char **argv) {
   ros::Publisher pub_cmd = n.advertise<geometry_msgs::Twist>("/uav2/goal_vel", 1000);
   ros::Subscriber sub_pos = n.subscribe("/vicon/ardrone_follower/ardrone_follower", 1000, recuperePos);
   ros::Subscriber sub_cible = n.subscribe("/uav2/cible", 1000, recuperePosCible); // ns + "/cible"
+  ros::Subscriber sub_navdata_leader = n.subscribe("/uav1/ardrone/navdata", 1000, recupereEtatLeader);
+  pub_landing = n.advertise<std_msgs::Empty>("/uav2/ardrone/land", 1000);
 
   ros::Rate loop_rate(50);
   geometry_msgs::Twist goal;

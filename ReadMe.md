@@ -70,6 +70,31 @@ Dans le fichier commade\_follower.cpp, au même endroit, vous pouvez changer la 
 Crazyflie2
 ==========
 
+Je n'ai jamais eu l'occasion de faire voler simultanément 2 Crazyflies dans la volière (par manque de boules réfléchissantes du VICON). Il n'y a donc pas de fichier .launch tout prêt pour lancer cette expérience, mais avec tout le code de l'archive, on peut le faire relativement simplement.
+
+En revanche, on peut faire voler un Crazyflie seul, ou un Crazyflie en tant que leader et un AR drone en tant que follower. Le drone doit avoir son modèle enregistré dans le système VICON sous le nom de `cf_leader`, ou alors modifier le code en conséquence.
+
+Dans tous les cas, il faut lancer un terminal, faire le `source devel/setup.bash` à la racine du workspace, et lancer la commande suivante :
+
+		roslaunch crazyflie_driver crazyflie_server.launch
+
+On peut rajouter à la fin de cette commande `uri:=radio://0/80/2M` pour préciser à quel drone on souhaite se connecter, si ambiguïté il y a.
+
+* Ensuite, si l'on souhaite juste faire voler le Crazyflie seul, et le faire suivre sa commande (en tant que leader donc), il faut lancer la commande suivante (toujours dans un terminal avec la commande `source devel/setup.bash`) :
+
+		roslaunch crazyflie2 all.launch
+
+Puis, lancer rqt, et publier quelques messages 'cmd\_vel' pour qu'il se mette en route (je ne sais pas pourquoi cela est necessaire). Ne pas oublier d'arrêter cette publication rapidement.
+
+* Pour rajouter un AR Drone en follower, il y a 3 étapes :
+
+Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 26, colone 42, le topic écouté est bien `/vicon/cf_leader/cf_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
+
+Lancer la commande suivante :
+
+		roslaunch ardrone lf_ar_cf.launch
+
+Enfin, lancer rqt, et publier quelques messages 'cmd\_vel' pour que le Crazyflie se mette en route (je ne sais pas pourquoi cela est necessaire). Ne pas oublier d'arrêter cette publication rapidement. Et publier un `empty_msg` sur le topic `/uav2/ardrone/takeoff` pour faire décoller l'AR drone.
 
 
 Ardrone
@@ -81,6 +106,8 @@ Dans mes tests, le ardrone 2.0 était le leader, et se connectait avec l'adresse
 
 Sur le VICON Tracker, il faut que le système suive les 2 modèles : `ardrone_leader` et `ardrone_follower`. Il faut également que le système VICON soit connecté au même routeur que les drones, ou en tout cas, que la machine sur laquelle les codes seront exécutés soit connectée au routeur et au système VICON.
 
+Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 26, colone 42, le topic écouté est bien `/vicon/ardrone_leader/ardrone_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
+
 En premier lieu, sur votre machine, se connecter successivement aux drones qui vont être utilisés et lancer cette commande sur les deux pour qu'ils se connectent au routeur :
 
 		echo "./data/wifi.sh" | telnet 192.168.1.1
@@ -89,7 +116,7 @@ Puis se reconnecter au routeur. On peut vérifier qu'ils se sont bien connectés
 
 		ping 192.168.1.15
 
-Lorsque tout est prêt, on peut lancer le fichier launch dans un terminal (avec la commande `source devel/setup.bash` dans le workspace avant tout) :
+Lorsque tout est prêt, on peut lancer le fichier launch dans un terminal (avec la commande `source devel/setup.bash` à la racine du workspace avant tout) :
 
 		roslaunch ardrone leader_follower.launch
 

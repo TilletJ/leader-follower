@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+	<include file="$(find vicon_bridge)/launch/vicon.launch" />
+	<include file="$(find crazyflie_driver)/launch/crazyflie_add.launch" />
+	<include file="$(find crazyflie2)/launch/CF_leader.launch" />
+</launch>

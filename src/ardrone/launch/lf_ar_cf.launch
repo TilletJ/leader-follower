@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<launch>
+
+	<include file="$(find vicon_bridge)/launch/vicon.launch" />
+
+	<include file="$(find crazyflie_driver)/launch/crazyflie_add.launch" />
+	<include file="$(find crazyflie2)/launch/CF_leader.launch" />
+
+
+	<group ns="uav2">
+    <param name="tf_prefix" value="uav2" />
+		<include file="$(find ardrone_autonomy)/launch/ardrone.launch">
+    	</include>
+
+		<include file="$(find ardrone)/launch/ardrone_follower.launch">
+		</include>
+
+		<node name="ardrone_control" pkg="falkor_ardrone" type="ardrone_control.py" />
+	</group>
+
+</launch>
