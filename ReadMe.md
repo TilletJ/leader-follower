@@ -37,7 +37,7 @@ Installation
 
 Ce package utilise le packet `ardrone_autonomy`, il faut donc l'installer avec la commande :
 
-		sudo apt install ros-kinetic-ardrone-autonomy 
+		sudo apt install ros-kinetic-ardrone-autonomy
 
 Puis se placer à la racine du workspace (leader-follower), et lancer la commande `catkin_make`.
 Si des erreurs apparaissent, se référer au fichier "erreurs_rencontrees.md"
@@ -55,8 +55,8 @@ Dans un terminal lancé dans le workspace (ou `cd .../leader-follower`) lancer c
 
 Puis, lancer les 2 commandes suivantes :
 
-		roslaunch leader_follower labo_slam_gazebo_2_uav.launch 
-		roslaunch leader_follower leader_follower_auto.launch 
+		roslaunch leader_follower labo_slam_gazebo_2_uav.launch
+		roslaunch leader_follower leader_follower_auto.launch
 
 
 La premiere lance gazebo dans le world de la voliere du labo, avec 2 drones et 2 boules. La boule blanche représente l'objectif du leader, tandis que la grise représente celui du follower.
@@ -88,7 +88,7 @@ Puis, lancer rqt, et publier quelques messages 'cmd\_vel' pour qu'il se mette en
 
 * Pour rajouter un AR Drone en follower, il y a 3 étapes :
 
-Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 26, colone 42, le topic écouté est bien `/vicon/cf_leader/cf_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
+Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 34, colone 42, le topic écouté est bien `/vicon/cf_leader/cf_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
 
 Lancer la commande suivante :
 
@@ -106,7 +106,7 @@ Dans mes tests, le ardrone 2.0 était le leader, et se connectait avec l'adresse
 
 Sur le VICON Tracker, il faut que le système suive les 2 modèles : `ardrone_leader` et `ardrone_follower`. Il faut également que le système VICON soit connecté au même routeur que les drones, ou en tout cas, que la machine sur laquelle les codes seront exécutés soit connectée au routeur et au système VICON.
 
-Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 26, colone 42, le topic écouté est bien `/vicon/ardrone_leader/ardrone_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
+Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 34, colone 42, le topic écouté est bien `/vicon/ardrone_leader/ardrone_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
 
 En premier lieu, sur votre machine, se connecter successivement aux drones qui vont être utilisés et lancer cette commande sur les deux pour qu'ils se connectent au routeur :
 
@@ -123,22 +123,3 @@ Lorsque tout est prêt, on peut lancer le fichier launch dans un terminal (avec 
 Les objectifs sont publiés, et les commandes sont envoyées. Il ne reste plus qu'à faire décoller les drones : il faut publier un empty message sur les topics `/uav1/ardrone/takeoff` et `/uav2/ardrone/takeoff`. `uav1` correspond au leader et `uav2` au follower. À tout moment, vous pouvez les faire atterrir avec le même message sur le topic `/uavX/ardrone/land` ou couper les moteurs en cas d'urgence grâce au topic `/uavX/ardrone/reset`. Le plus fonctionnel est d'utiliser `rqt` pour publier ces messages.
 
 Ne pas oublier de vérifier le niveau de batterie des drones régulièrement : le pourcentage restant est publié sur le topic `uavX/ardrone/navdata`.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

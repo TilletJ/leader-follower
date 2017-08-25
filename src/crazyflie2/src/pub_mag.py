@@ -7,6 +7,14 @@ from sensor_msgs.msg import MagneticField, Imu
 from geometry_msgs.msg import Vector3, Vector3Stamped
 from tf.transformations import euler_from_quaternion
 
+"""
+    Ce noeud sert à récupérer le cap du Crazyflie et à le publier. En effet, avec
+    le firmware actuel, on n'a pas directement accès aux angles d'Euler.
+    Ce programme utilise le package imu_tools qui donne les angles yaw pitch et roll
+    à partir des données imu (accéléro, magnetic_field, ...)
+    Pour que le package imu_tools fonctionne correctement, on est obligé de republier
+    des topics déjà existant sous d'autres noms, avec de légères modifications.
+"""
 
 def recupereMag(msg):
     magn = Vector3Stamped()
@@ -38,6 +46,7 @@ sub_imu = rospy.Subscriber('/imu', Imu, recupereImu)
 pub_imu = rospy.Publisher('/imu/data_raw', Imu, queue_size=1)
 
 sub_imu_orientation = rospy.Subscriber('/imu/data', Imu, recupereAngles)
+# Finalement, on publie les données qui nous intéressent dans le topic /angles.
 pub_angles = rospy.Publisher('/angles', Vector3, queue_size=1)
 
 rospy.spin()

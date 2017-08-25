@@ -6,6 +6,15 @@
 #include "tf/tf.h"
 #include <tf2/LinearMath/Quaternion.h>
 
+/*
+  Ce code permet le contrôle d'un Crazyflie avec une seule boule VICON. On lit
+  donc sa position sur le topic /vicon/pos et cela ne permet pas d'avoir plusieurs
+  drone simultanément dans la volière.
+  Pour utiliser le Crazyflie avec d'autres drones, utiliser plutôt le noeud
+  cfdrone_3B (3B signifiant ici 3 boules, le nombre minimum nécessaire).
+*/
+
+
 const double pi = 3.14159;
 double cible[3], pos[3];
 double roll, pitch, yaw;
@@ -32,7 +41,6 @@ void recuperePosCible(const geometry_msgs::PoseStamped::ConstPtr& msg)
   cible[2] = msg->pose.position.z;
   tf::Quaternion q(msg->pose.orientation.x, msg->pose.orientation.y, msg->pose.orientation.z, msg->pose.orientation.w);
   obj_yaw = tf::getYaw(q);
-  //TODO recuper le cap de la cible et s'en servir.
 }
 
 
@@ -41,9 +49,12 @@ int main(int argc, char **argv) {
   ros::NodeHandle n;
 
   std::string ns = ros::this_node::getNamespace();
-  ros::Publisher pub_cmd = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000); // ns + "/cmd_vel"
+  // On publie la commande au drone directement sur le topic /cmd_vel
+  ros::Publisher pub_cmd = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
+  // On a besoin de récupérer la position du drone, la cible du drone, et les
+  // angles du drone (qui ne sont pas donnés par le VICON comme il n'y a qu'une boule).
   ros::Subscriber sub_pos = n.subscribe("/vicon/pos", 1000, recuperePos);
-  ros::Subscriber sub_cible = n.subscribe("/uav1/cible", 1000, recuperePosCible); // ns + "/cible"
+  ros::Subscriber sub_cible = n.subscribe("/uav1/cible", 1000, recuperePosCible);
   ros::Subscriber sub_angles = n.subscribe("/angles", 1000, recupereAngles);
 
   double e_x = 0, e_y = 0, e_z = 0, e_cap = 0, e_x_old, e_y_old, e_z_old, e_cap_old;
@@ -53,13 +64,17 @@ int main(int argc, char **argv) {
   float dt;
   ros::Time time;
 
-  ros::Rate loop_rate(50);
+  ros::Rate loop_rate(50); // Les commandes sont envoyées à une fréquence de 50Hz.
   geometry_msgs::Twist cmd;
 
   while (ros::ok()) {
+    /*
+      Ici, on utilise un régulateur PID pour contrôler le Crazyflie.
+    */
+
     time = ros::Time::now();
     dt = time.toSec() - m_previousTime.toSec();
-    if (dt <= 0)
+    if (dt <= 0) // dt ne doit pas être nul (pour éviter erreur div / 0)
         {
             dt = 0.02;
         }
@@ -86,15 +101,17 @@ int main(int argc, char **argv) {
     vc = -40 * e_x - 20 * (e_x-e_x_old) / dt - 2 * m_integral_x;
     vc = std::max(std::min(10.0, vc), -10.0);
 
+    // On projette la commande par rapport à l'orientation du drone.
     cmd.linear.x = cos(yaw*pi/180)*uc + sin(yaw*pi/180)*vc;
     cmd.linear.y = sin(yaw*pi/180)*uc - cos(yaw*pi/180)*vc;
+    
     cmd.linear.z = 15000 + 5000 * e_z + 6000 * (e_z-e_z_old) / dt + 3500 * m_integral_z;
     cmd.linear.z = std::max(std::min(60000.0, cmd.linear.z), 10000.0);
     cmd.angular.z = -200 * e_cap - 20 * (e_cap-e_cap_old) / dt;
     cmd.angular.z = std::max(std::min(200.0, cmd.angular.z), -200.0);
 
     m_previousTime = time;
-    pub_cmd.publish(cmd);
+    pub_cmd.publish(cmd); // On publie la commande.
     ros::spinOnce();
     loop_rate.sleep();
   }

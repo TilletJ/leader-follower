@@ -48,13 +48,18 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "drone");
   ros::NodeHandle n;
 
-  ns = ros::this_node::getNamespace();
+  ns = ros::this_node::getNamespace(); // On veut savoir si le noeud a été lancé pour le leader ou le follower
+  // On publie la commande sur le topic /uavX/cmd_vel où X est le numéro du drone (1 pour leader, 2 pour follower)
   ros::Publisher pub_cmd = n.advertise<geometry_msgs::Twist>(ns + "/cmd_vel", 1000);
+  // De même, on récupère la position de la cible concernée par le drone.
   ros::Subscriber sub_cible = n.subscribe(ns + "/cible", 1000, recuperePosCible);
 
+  // On récupère les positions du leader et du follower, données par le système VICON (ou par le noeud gazebo_vicon qui simule ce que fait le VICON en réalité)
   ros::Subscriber sub_pos_leader = n.subscribe("/vicon/ardrone_leader/ardrone_leader", 1000, recuperePosL);
   ros::Subscriber sub_pos_follower = n.subscribe("/vicon/ardrone_follower/ardrone_follower", 1000, recuperePosF);
 
+  // Pour les drones de la simulation, un armement est nécessaire pour pouvoir actionner les moteurs.
+  // Cela se fait en appelant le service concerné.
   ros::ServiceClient client = n.serviceClient<hector_uav_msgs::EnableMotors>(ns + "/enable_motors");
   hector_uav_msgs::EnableMotors armement;
   armement.request.enable = true;
@@ -62,19 +67,23 @@ int main(int argc, char **argv) {
   {
     ROS_INFO("Armement: %d", (bool)armement.response.success);
   }
-  else
+  else // Si l'armement n'a pas fonctionné, une erreur est envoyée (ne devrait pas arriver)
   {
     ROS_ERROR("Failed to call service enable_motors");
     return 1;
   }
 
-  ros::Rate loop_rate(25);
-  float cmd_max = 2.0;
+  ros::Rate loop_rate(25); // Les commandes sont envoyées à une fréquence de 25Hz.
+  float cmd_max = 2.0; // On limite les commandes envoyées par un certain seuil.
   geometry_msgs::Twist cmd;
   float e_x, e_y, e_z, e_cap;
   float cmdx, cmdy;
 
   while (ros::ok()) {
+    /*
+      Ici, on se contente d'une commande proportionnelle pour la simulation, puisqu'elle
+      suffit pour obtenir des résultats corrects.
+    */
     e_x = cible[0] - pos[0];
     e_y = cible[1] - pos[1];
     e_z = cible[2] - pos[2];
@@ -121,10 +130,11 @@ int main(int argc, char **argv) {
 
     cmdx = cmd.linear.x;
     cmdy = cmd.linear.y;
+    // On projette la commande par rapport à l'orientation du drone.
     cmd.linear.x = cos(pos[3])*cmdx + sin(pos[3])*cmdy;
     cmd.linear.y = -sin(pos[3])*cmdx + cos(pos[3])*cmdy;
 
-    pub_cmd.publish(cmd);
+    pub_cmd.publish(cmd); // On publie la commande.
     ros::spinOnce();
     loop_rate.sleep();
   }

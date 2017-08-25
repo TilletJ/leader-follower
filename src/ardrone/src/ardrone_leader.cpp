@@ -6,6 +6,11 @@
 #include "tf/tf.h"
 #include <tf2/LinearMath/Quaternion.h>
 
+/*
+  Ce code permet le contrôle d'un AR Drone leader. Il doit avoir son modèle sur
+  le système VICON au nom de ardrone_leader.
+*/
+
 const double pi = 3.14159;
 double cible[3], pos[3];
 double yaw, obj_yaw;
@@ -33,16 +38,23 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "ardrone_leader");
   ros::NodeHandle n;
 
+  // On publie la commande au drone sur le topic /uav1/goal_vel pour que le PID prenne en compte l'objectif
   ros::Publisher pub_cmd = n.advertise<geometry_msgs::Twist>("/uav1/goal_vel", 1000); // ns + "/cmd_vel"
+  // On a besoin de récupérer la position du drone, et la cible du drone.
   ros::Subscriber sub_pos = n.subscribe("/vicon/ardrone_leader/ardrone_leader", 1000, recuperePos);
   ros::Subscriber sub_cible = n.subscribe("/uav1/cible", 1000, recuperePosCible); // ns + "/cible"
 
-  ros::Rate loop_rate(50);
+  ros::Rate loop_rate(50); // Les commandes sont envoyées à une fréquence de 50Hz.
   geometry_msgs::Twist goal;
 
   double e_cap;
 
   while (ros::ok()) {
+    /*
+      Ici, on utilise un régulateur PID (implémenter dans le package falkor_ardrone)
+      pour contrôler le drone Parrot. On a juste besoin de diminuer la sortie de
+      ce régulateur.
+    */
 
     e_cap = obj_yaw - yaw;
     if (e_cap > pi)
@@ -53,12 +65,14 @@ int main(int argc, char **argv) {
       e_cap = e_cap + 2*pi;
     }
 
+    // On projette la commande par rapport à l'orientation du drone.
     goal.linear.x = 0.2 * (cos(yaw)*(cible[0]-pos[0]) + sin(yaw)*(cible[1]-pos[1]));
     goal.linear.y = 0.2 * (-sin(yaw)*(cible[0]-pos[0]) + cos(yaw)*(cible[1] - pos[1]));
+
     goal.linear.z = 0.2 * (cible[2] - pos[2]);
     goal.angular.z = 0.2 * e_cap;
 
-    pub_cmd.publish(goal);
+    pub_cmd.publish(goal); // On publie la commande.
     ros::spinOnce();
     loop_rate.sleep();
   }

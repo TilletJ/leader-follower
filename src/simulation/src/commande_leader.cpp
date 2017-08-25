@@ -10,6 +10,14 @@ float t = 0;
 
 void euler(const float& dt)
 {
+  /*
+    Cette fonction calcule le prochain point que le drone leader doit atteindre.
+    Plusieurs trajectoirs sont proposées ici : Courbe de Lissajoux, Cercle ou
+    Courbe de Lemniscate. Dans tous les cas la consigne en cap est la même : le
+    drone doit regarder devant lui. Cela sert au follower qui s'aligne sur le cap
+    du leader.
+  */
+
   float x_old = X[0];
   float y_old = X[1];
 
@@ -34,19 +42,20 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "commande_leader");
   ros::NodeHandle n;
 
+  // On publie le point objectif pour le leader sur le topic /uav1/cible.
   ros::Publisher cible = n.advertise<geometry_msgs::PoseStamped>("/uav1/cible", 1000);
 
   X[0]=0;
   X[1]=0;
   X[2]=0;
 
-  ros::Rate loop_rate(25);
+  ros::Rate loop_rate(25); // Les commandes sont envoyées à une fréquence de 25Hz.
   float dt = 0.1;
   tf::Quaternion q;
   geometry_msgs::PoseStamped msg;
 
   while (ros::ok()) {
-    euler(dt);
+    euler(dt); // On calcule les coordonnées du prochain point à atteindre.
     t += dt;
 
     q.setRPY(0,0,X[2]);
@@ -61,7 +70,7 @@ int main(int argc, char **argv) {
     msg.pose.orientation.z = q.getZ();
     msg.pose.orientation.w = q.getW();
 
-    cible.publish(msg);
+    cible.publish(msg); // On publie la cible.
     ros::spinOnce();
     loop_rate.sleep();
   }

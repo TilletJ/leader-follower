@@ -4,7 +4,7 @@
 """
 Remplace le systeme VICON pour la simulation en recuperant la position des objets
 dans gazebo et en les publiant.
-Met egalement a jour les positions des objectifs des drones dans gazebo (invisible
+Met également à jour les positions des objectifs des drones dans gazebo (invisible
 en realite).
 """
 
@@ -50,7 +50,9 @@ def recupere_cible_follower(msg):
 
 rospy.init_node('gazebo_vicon')
 
+# On s'inscrit au topic de Gazebo qui donne la position des objets dans le world.
 sub_pos = rospy.Subscriber('/gazebo/model_states', ModelStates, recupere_pos)
+# On publie ces positions comme le ferait le VICON, en respectant le nom des topics et le type de message.
 pub_pos_leader = rospy.Publisher('/vicon/ardrone_leader/ardrone_leader', TransformStamped, queue_size=1)
 pub_pos_follower = rospy.Publisher('/vicon/ardrone_follower/ardrone_follower', TransformStamped, queue_size=1)
 
@@ -70,7 +72,7 @@ ms_leader.reference_frame = "world"
 ms_follower.model_name = "objectif"
 ms_follower.reference_frame = "world"
 
-rate = rospy.Rate(20)
+rate = rospy.Rate(20) # Les positions sont envoyées à une fréquence de 20Hz.
 
 while not rospy.is_shutdown():
     pos_l.header.stamp = rospy.Time()
