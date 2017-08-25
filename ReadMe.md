@@ -80,21 +80,25 @@ Dans tous les cas, il faut lancer un terminal, faire le `source devel/setup.bash
 
 On peut rajouter à la fin de cette commande `uri:=radio://0/80/2M` pour préciser à quel drone on souhaite se connecter, si ambiguïté il y a.
 
-* Ensuite, si l'on souhaite juste faire voler le Crazyflie seul, et le faire suivre sa commande (en tant que leader donc), il faut lancer la commande suivante (toujours dans un terminal avec la commande `source devel/setup.bash`) :
+### Faire voler le Crazyflie seul
+
+Si l'on souhaite juste faire voler le Crazyflie seul, et le faire suivre sa commande (en tant que leader donc), il faut lancer la commande suivante (toujours dans un terminal avec la commande `source devel/setup.bash`) :
 
 		roslaunch crazyflie2 all.launch
 
 Puis, lancer rqt, et publier quelques messages 'cmd\_vel' pour qu'il se mette en route (je ne sais pas pourquoi cela est necessaire). Ne pas oublier d'arrêter cette publication rapidement.
 
-* Pour rajouter un AR Drone en follower, il y a 3 étapes :
+### Mettre un AR Drone en follower
 
-Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 34, colone 42, le topic écouté est bien `/vicon/cf_leader/cf_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
+Pour rajouter un AR Drone en follower, il y a 3 étapes :
 
-Lancer la commande suivante :
+* Vérifier dans le fichier `src/simulation/src/commande_follower.cpp`qu'à la ligne 34, colone 42, le topic écouté est bien `/vicon/cf_leader/cf_leader` (ou celui du modèle VICON). Sinon corriger la ligne et recompiler (`catkin_make` à la racine du workspace).
+
+* Lancer la commande suivante :
 
 		roslaunch ardrone lf_ar_cf.launch
 
-Enfin, lancer rqt, et publier quelques messages 'cmd\_vel' pour que le Crazyflie se mette en route (je ne sais pas pourquoi cela est necessaire). Ne pas oublier d'arrêter cette publication rapidement. Et publier un `empty_msg` sur le topic `/uav2/ardrone/takeoff` pour faire décoller l'AR drone.
+* Enfin, lancer rqt, et publier quelques messages 'cmd\_vel' pour que le Crazyflie se mette en route (je ne sais pas pourquoi cela est necessaire). Ne pas oublier d'arrêter cette publication rapidement. Et publier un `empty_msg` sur le topic `/uav2/ardrone/takeoff` pour faire décoller l'AR drone.
 
 
 Ardrone
